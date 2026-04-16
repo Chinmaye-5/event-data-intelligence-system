@@ -1,6 +1,7 @@
-import pandas as pd
+import pandas as pd 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+import os  # added
 
 def load_data(file_path):
     try:
@@ -28,7 +29,7 @@ def preprocess_data(data):
     return scaled_data, data
 
 def apply_clustering(scaled_data, original_data, k=3):
-    print("🔍 Applying K-means clustering...")
+    print("Applying K-means clustering...")
 
     kmeans = KMeans(n_clusters=k, random_state=42)
     clusters = kmeans.fit_predict(scaled_data)
@@ -42,8 +43,14 @@ def main():
     file_path = "data/events.csv"  # make sure this file exists
 
     data = load_data(file_path)
+
     if data is None:
-        return
+        print("Using sample dataset...")
+        data = pd.DataFrame({
+            "attendees": [100, 150, 200, 250, 300, 120, 180],
+            "duration": [2, 3, 4, 5, 6, 2, 3],
+            "rating": [4.5, 4.0, 4.8, 4.2, 4.9, 3.8, 4.3]
+        })
 
     scaled_data, original_data = preprocess_data(data)
 
@@ -52,7 +59,8 @@ def main():
     print("\n Clustered Data Sample:")
     print(clustered_data.head())
 
-    # Save output
+    os.makedirs("data", exist_ok=True)
+
     clustered_data.to_csv("data/output.csv", index=False)
     print(" Output saved to data/output.csv")
 
